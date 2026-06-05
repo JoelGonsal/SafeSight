@@ -1,0 +1,487 @@
+/* ── DASHBOARD BASE ───────────────────────── */
+.dashboard {
+  padding: 0;
+  width: 100%;
+
+  color: #f1f5f9;
+  position: relative;
+}
+
+/* GLOBAL BRAND GRADIENT */
+h2 {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  background: linear-gradient(90deg, #FF6B00, #FFB800);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: 1px;
+}
+
+/* ── HEADER (TACTICAL STYLE) ───────────────────────── */
+.dashboard-header {
+  position: relative;
+  padding: 20px 30px 10px 30px; /* Reduced bottom padding from 30px to 10px */
+  margin-bottom: 0px;             /* Ensure there is no bottom margin */
+  background: linear-gradient(90deg, rgba(20, 22, 26, 1) 0%, rgba(20, 22, 26, 0.4) 100%);
+  border-left: 4px solid #333;
+  transition: all 0.5s ease;
+  overflow: hidden;
+}
+
+
+.dashboard-header h1 {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1.8rem;
+  margin-bottom: 4px;
+  color: #FF6B00;
+  font-weight: 700;
+  letter-spacing: 2px;
+  
+  
+}
+
+/* ── STATS GRID (DYNAMIC CARDS) ───────────────────────── */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  margin: 0 20px 30px 20px;
+}
+
+.stat-card {
+  background: rgba(30, 32, 35, 0.6);
+  border-radius: 8px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Hover Accent Line */
+.stat-card::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0%;
+  height: 3px;
+  background: #FF6B00;
+  transition: width 0.3s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+  border-color: rgba(255, 107, 0, 0.3);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.stat-card:hover::after {
+  width: 100%;
+}
+
+.stat-value {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin-top: 10px;
+}
+
+/* Dynamic Stat Colors */
+.stat-card.total .stat-value { color: #f1f5f9; }
+.stat-card.safe .stat-value  { color: #34d399; text-shadow: 0 0 10px rgba(52, 211, 153, 0.3); }
+.stat-card.danger .stat-value { color: #FF6B00; text-shadow: 0 0 10px rgba(255, 107, 0, 0.3); }
+
+/* ── VIDEO HUD (HEADS-UP DISPLAY) ───────────────────────── */
+/* 1. The Wrapper: This handles the centering logic */
+.camera-section {
+  display: flex;
+  justify-content: center; /* Centers horizontally */
+  align-items: center;     /* Centers vertically if needed */
+  width: 100%;
+  padding: 20px 0;
+  overflow: visible; 
+  margin-top: 0;
+}
+
+/* 2. The Container: Shrinks to fit the webcam size */
+.video-container {
+  position: relative;
+  /* CRITICAL: width/height auto makes it wrap the internal video/canvas size */
+  width: fit-content; 
+  height: fit-content;
+  margin: 0 auto;
+  
+  background: #000;
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 107, 0, 0.4); /* Slightly brighter for visibility */
+  
+  /* Flex ensures internal elements don't create extra whitespace */
+  display: flex; 
+}
+
+/* 3. The HUD Brackets: Set inset to 0 to hug the edges perfectly */
+.video-container::before {
+  content: "";
+  position: absolute;
+  inset: 0; /* Changed from 15px to 0 to align with the border */
+  border: 2px solid rgba(255, 184, 0, 0.5);
+  clip-path: polygon(
+    0 0, 40px 0, 40px 4px, 4px 4px, 4px 40px, 0 40px,
+    calc(100% - 40px) 0, 100% 0, 100% 40px, calc(100% - 4px) 40px, calc(100% - 4px) 4px, calc(100% - 40px) 4px,
+    100% calc(100% - 40px), 100% 100%, calc(100% - 40px) 100%, calc(100% - 40px) calc(100% - 4px), calc(100% - 4px) calc(100% - 4px), calc(100% - 4px) calc(100% - 40px),
+    40px 100%, 0 100%, 0 calc(100% - 40px), 4px calc(100% - 40px), 4px calc(100% - 4px), 40px calc(100% - 4px)
+  );
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* 4. Scanning line remains the same but constrained to container */
+.video-container::after {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 4px;
+  background: linear-gradient(90deg, transparent, #FF6B00, transparent);
+  box-shadow: 0 0 15px #FF6B00;
+  animation: scanning 4s infinite linear;
+  opacity: 0.4;
+  z-index: 3;
+}
+
+/* 5. Ensure the canvas/video doesn't stretch past the screen on zoom */
+.webcam-video, .detection-feed {
+  max-width: 90vw; /* Keeps it from breaking small screens */
+  height: auto;
+  display: block;
+}
+
+@keyframes scanning {
+  0% { top: 0%; }
+  100% { top: 100%; }
+}
+/* ── BUTTONS (INDUSTRIAL TECH) ───────────────────────── */
+.btn {
+  padding: 12px 28px;
+  border-radius: 4px;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-primary {
+  background: #FF6B00;
+  color: #000;
+  border: none;
+  margin-bottom: 20px;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: #FFB800;
+  box-shadow: 0 0 20px rgba(255, 184, 0, 0.4);
+  transform: scale(1.05);
+}
+
+.btn-danger {
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+  border: 1px solid #ef4444;
+}
+
+.btn-danger:hover {
+  background: #ef4444;
+  color: #fff;
+  box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
+}
+
+/* ── COMPLIANCE BADGE (DYNAMIC PULSE) ───────────────────────── */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  border-radius: 4px;
+  font-family: 'Orbitron', sans-serif;
+  font-weight: 700;
+  border: 1px solid currentColor;
+}
+
+.status-badge.success {
+  background: rgba(52, 211, 153, 0.1);
+  color: #34d399;
+}
+
+/* Pulsing dot for "Live" status */
+.status-badge::before {
+  content: "";
+  width: 8px; height: 8px;
+  background: currentColor;
+  border-radius: 50%;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(1.2); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+/* ── RESPONSIVE ───────────────────────── */
+@media (max-width: 768px) {
+  .video-container {
+    min-height: 320px;
+    width: calc(100% - 20px);
+    margin: 0 10px;
+  }
+  .stat-value { font-size: 1.8rem; }
+}
+
+/* ── THE CONTAINER ── */
+
+/* ── THE CONTAINER ── */
+.controls-center {
+  width: 100%;
+  display: flex;
+  justify-content: center; /* Centers horizontally */
+  align-items: center;     /* Prevents vertical stretching */
+  
+  padding: 0 0 15px 0; /* Removed top padding (first 0) */
+  min-height: unset;    /* Removed min-height to let it collapse to button size */
+}
+
+/* ── THE SMALL BUTTON ── */
+.btn {
+  /* CRITICAL FIXES FOR SIZE */
+  width: auto !important;       /* Prevents full-screen stretch */
+  min-width: 140px !important;  /* Minimum professional width */
+  max-width: 200px !important;  /* Prevents it from getting too big */
+  
+  /* Compact Padding */
+  padding: 8px 20px !important; 
+  
+  /* Typography & Style */
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.8rem !important;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-radius: 4px !important;
+  cursor: pointer;
+  
+  /* Layout inside button */
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: none !important;
+  transition: all 0.2s ease;
+}
+
+/* 🟢 START BUTTON - SAFETY GREEN */
+.btn-start {
+  background: #22c55e !important;
+  color: #050505 !important;
+  box-shadow: 0 4px 0px #166534;
+}
+
+/* 🔴 STOP BUTTON - CRITICAL RED */
+.btn-stop {
+  background: #ef4444 !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 0px #991b1b;
+}
+
+/* Hover effects */
+.btn:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.1);
+}
+
+.btn:active {
+  transform: translateY(2px);
+  box-shadow: 0 2px 0px rgba(0,0,0,0.5);
+}
+
+.camera-feed {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: #000;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+/* placeholder overlay */
+.placeholder-feed {
+  position: absolute;
+  inset: 0; /* replaces top/left/width/height */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+
+  color: var(--text-main);
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(6px);
+
+  padding: 20px;
+  z-index: 5;
+  animation: fadeIn 0.3s ease;
+}
+
+/* text styling */
+.placeholder-feed p {
+  margin: 6px 0;
+  color: var(--text-dim);
+}
+
+/* optional highlight for first line */
+.placeholder-feed p:first-child {
+  color: var(--accent-yellow);
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+/* smooth appearance */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+p{
+  font-family: 'Orbitron', sans-serif;
+  
+}
+
+/* --- DYNAMIC HEADER STYLES --- */
+
+.dashboard-header {
+  position: relative;
+  padding: 30px;
+  background: linear-gradient(90deg, rgba(20, 22, 26, 1) 0%, rgba(20, 22, 26, 0.4) 100%);
+  border-left: 4px solid #333;
+  transition: all 0.5s ease;
+  overflow: hidden;
+}
+
+/* When live, change the accent border to orange */
+.dashboard-header.is-live {
+  border-left-color: #FF6B00;
+  background: linear-gradient(90deg, rgba(255, 107, 0, 0.05) 0%, rgba(20, 22, 26, 0.4) 100%);
+}
+
+.status-indicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.pulse-dot {
+  width: 8px;
+  height: 8px;
+  background-color: #666;
+  border-radius: 50%;
+  transition: background-color 0.3s ease;
+}
+
+/* Green pulse when ready, Orange pulse when live */
+.dashboard-header .pulse-dot { background-color: #22c55e; box-shadow: 0 0 10px #22c55e; }
+.dashboard-header.is-live .pulse-dot {
+  background-color: #FF6B00;
+  animation: pulse-animation 1.5s infinite;
+}
+
+.status-text {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.7rem;
+  letter-spacing: 2px;
+  color: var(--text-dim);
+}
+
+.glitch-text {
+  position: relative;
+  font-size: 24px;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+/* Scanning line effect over the title */
+.dashboard-header::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 107, 0, 0.05),
+    transparent
+  );
+  transition: 0.5s;
+}
+
+.dashboard-header:hover::after {
+  left: 100%;
+  transition: 1.5s;
+}
+
+.typing-text {
+  margin: 5px 0 0 0;
+  opacity: 0.8;
+  font-size: 0.9rem;
+  color: #94a3b8;
+  border-right: 2px solid transparent;
+}
+
+/* Animation for the status dot */
+@keyframes pulse-animation {
+  0% { box-shadow: 0 0 0 0px rgba(255, 107, 0, 0.7); }
+  100% { box-shadow: 0 0 0 10px rgba(255, 107, 0, 0); }
+}
+
+/* --- BUTTON ENHANCEMENTS --- */
+
+.btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.btn-icon {
+  font-size: 1.1rem;
+}
+
+.btn-start:hover {
+  background: #2ed573 !important;
+  transform: scale(1.05);
+  box-shadow: 0 0 20px rgba(46, 213, 115, 0.4);
+}
+
+.btn-stop:hover {
+  background: #ff4757 !important;
+  transform: scale(1.05);
+  box-shadow: 0 0 20px rgba(255, 71, 87, 0.4);
+}

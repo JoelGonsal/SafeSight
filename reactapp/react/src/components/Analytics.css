@@ -1,0 +1,331 @@
+/* =========================
+   GLOBAL INDUSTRIAL DARK UI
+========================= */
+
+body {
+  margin: 0;
+  font-family: 'Inter', system-ui, sans-serif;
+  background: radial-gradient(circle at top, #1a1c1e, #0a0b0c 80%);
+  color: #e5e7eb;
+  overflow-x: hidden;
+}
+
+/* =========================
+   ANALYTICS PAGE & DYNAMIC REFRESH
+========================= */
+
+.analytics-page {
+  padding: 24px;
+  animation: slideUpFade 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: opacity 0.3s ease;
+}
+
+/* Pulse effect when data is refreshing */
+.analytics-page.refresh-active {
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+@keyframes slideUpFade {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* =========================
+   HEADER & LIVE INDICATOR
+========================= */
+
+.analytics-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.analytics-header h2 {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 24px;
+  font-weight: 700;
+  background: linear-gradient(90deg, #FF6B00, #FFB800);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  filter: drop-shadow(0 0 10px rgba(255, 107, 0, 0.3));
+}
+
+.live-indicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 10px;
+  font-weight: 700;
+  color: #94a3b8;
+  letter-spacing: 1px;
+  margin-top: 4px;
+}
+
+.live-indicator .dot {
+  width: 6px;
+  height: 6px;
+  background: #34d399; /* Green for active system */
+  border-radius: 50%;
+  box-shadow: 0 0 8px #34d399;
+  animation: pulseGreen 2s infinite;
+}
+
+@keyframes pulseGreen {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.5); opacity: 0.5; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* =========================
+   REFRESH BUTTON (TACTICAL)
+========================= */
+
+.refresh-btn {
+  background: rgba(255, 107, 0, 0.1);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 184, 0, 0.3);
+  padding: 10px 20px;
+  border-radius: 6px;
+  color: #fff;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: 1px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+}
+
+.refresh-btn:hover:not(:disabled) {
+  background: #FF6B00;
+  color: #000;
+  border-color: #FFB800;
+  box-shadow: 0 0 20px rgba(255, 107, 0, 0.4);
+  transform: translateY(-2px);
+}
+
+.refresh-btn.spinning {
+  animation: btnPulse 1s infinite alternate;
+  opacity: 0.8;
+}
+
+@keyframes btnPulse {
+  from { border-color: rgba(255, 184, 0, 0.3); }
+  to { border-color: rgba(255, 184, 0, 1); }
+}
+
+/* =========================
+   STATS CARDS (KINETIC)
+========================= */
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+  margin-bottom: 32px;
+}
+
+.stat-card {
+  background: rgba(30, 32, 35, 0.5);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-left: 4px solid #334155; /* Default industrial slate edge */
+  border-radius: 8px;
+  padding: 20px;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-card:hover {
+  transform: translateY(-5px) scale(1.02);
+  background: rgba(40, 42, 45, 0.7);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+}
+
+/* Branded Accent Edges */
+.stat-card.highlight-orange { border-left-color: #FF6B00; }
+.stat-card h3 {
+  font-size: 12px;
+  text-transform: uppercase;
+  color: #94a3b8;
+  letter-spacing: 1.5px;
+  margin-bottom: 12px;
+}
+
+.stat-card p {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 32px;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0;
+}
+
+.text-orange { color: #FF6B00 !important; }
+.text-yellow { color: #FFB800 !important; }
+
+/* =========================
+   CHART BOXES (HUD STYLE)
+========================= */
+
+.charts-main-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.chart-box {
+  background: rgba(20, 21, 23, 0.6);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 107, 0, 0.1);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+  transition: border-color 0.3s ease;
+}
+
+.chart-box.full-width {
+  grid-column: span 2;
+}
+
+.chart-box:hover {
+  border-color: rgba(255, 184, 0, 0.3);
+}
+
+.chart-box h3 {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #cbd5e1;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.chart-box h3::before {
+  content: "";
+  width: 3px;
+  height: 14px;
+  background: #FF6B00;
+}
+
+/* =========================
+   CUSTOM CHART TOOLTIP
+========================= */
+
+.custom-chart-tooltip {
+  background: rgba(15, 16, 18, 0.95);
+  border: 1px solid #FF6B00;
+  padding: 10px 15px;
+  border-radius: 4px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.5);
+}
+
+.custom-chart-tooltip .label {
+  color: #FFB800;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 12px;
+  margin: 0;
+}
+
+.custom-chart-tooltip .desc {
+  color: #94a3b8;
+  font-size: 10px;
+  margin-top: 4px;
+  text-transform: uppercase;
+}
+
+/* =========================
+   LOADING & SPINNER
+========================= */
+
+.analytics-loading {
+  height: 80vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  color: #FFB800;
+  font-family: 'Orbitron', sans-serif;
+  letter-spacing: 2px;
+}
+
+.industrial-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(255, 107, 0, 0.1);
+  border-top: 4px solid #FF6B00;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* =========================
+   SCROLLBAR & RESPONSIVE
+========================= */
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: #FF6B00; }
+
+@media (max-width: 1024px) {
+  .charts-main-grid { grid-template-columns: 1fr; }
+  .chart-box.full-width { grid-column: span 1; }
+}
+.centered-chart-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center; /* This is the key for horizontal centering */
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+/* Ensure the chart box itself doesn't try to stretch to fill the grid */
+.centered-chart-wrapper .chart-box {
+  width: 100%;
+  max-width: 500px; /* Optional: prevents the box from getting too wide */
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Centers the heading and the SVG inside the box */
+}
+
+/* Force Recharts to respect the center */
+.chart-box h3 {
+  /* This forces the heading to the left regardless of the parent's centering */
+  align-self: flex-start; 
+  
+  width: 100%;
+  text-align: left;
+  
+  /* Styling to match your HUD theme */
+  font-family: 'Orbitron', sans-serif;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #cbd5e1;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Ensure the accent bar stays on the left of the text */
+.chart-box h3::before {
+  content: "";
+  width: 3px;
+  height: 14px;
+  background: #FF6B00;
+}
